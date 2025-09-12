@@ -191,7 +191,7 @@ void Print_Param(void)
   printf("\n");
 }
 
-void verify_results(void)
+void Verify_results(void)
 {
-  printf("%s\n", isequal_ks(kstate_cpu, kstate_gpu) ? "pass" : "fail");
+  printf("%s\n", isEqual_KS(Kstate_cpu, Kstate_gpu) ? "PASS" : "FAIL");
 }
