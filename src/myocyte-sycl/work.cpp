@@ -146,6 +146,8 @@ int work(int xmax, int workload)
     }
   }
 
+  auto time4 = std::chrono::steady_clock::now();
+
   // print results to output.txt
   FILE * pFile;
   pFile = fopen ("output.txt","w");
@@ -168,7 +170,6 @@ int work(int xmax, int workload)
 
   fclose (pFile);
 
-  auto time4 = std::chrono::steady_clock::now();
 
   //========================================================
   //	DEALLOCATION

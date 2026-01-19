@@ -29,7 +29,7 @@ void write(
 
   fid = fopen(filename, "w");
   if( fid == NULL ){
-    printf( "ERROR: The file %s was not opened for reading\n", filename );
+    printf( "ERROR: The file %s was not opened for writing\n", filename );
     return;
   }
 
