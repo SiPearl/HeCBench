@@ -21,7 +21,7 @@ HIP_ARCH  = gfx908
 
 program = main
 
-source = main.cpp
+source = main.cpp fft.cpp fft-opt.cpp
 
 obj = $(source:.cpp=.o)
 
@@ -47,7 +47,8 @@ endif
 
 ifeq ($(HIP), yes)
   CFLAGS += -fsycl-targets=amdgcn-amd-amdhsa \
-	    -Xsycl-target-backend --offload-arch=$(HIP_ARCH) 
+	    -Xsycl-target-backend --offload-arch=$(HIP_ARCH) \
+	    -DFFT_AMD_BACKEND
 endif
 
 # Debug Flags
@@ -71,7 +72,7 @@ endif
 $(program): $(obj)
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-%.o: %.cpp fft1D_512.sycl ifft1D_512.sycl
+%.o: %.cpp reference.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
