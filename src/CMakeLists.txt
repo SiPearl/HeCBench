@@ -535,6 +535,7 @@ set(HECBENCH_POC_BENCHMARKS
     leukocyte
     miniFE
     mergeVS
+    mlaDecode
     mlp
     muon
     pointerchase
