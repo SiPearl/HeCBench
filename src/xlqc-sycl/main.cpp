@@ -617,16 +617,32 @@ int main(int argc, char* argv[])
     ++ iter;
   }
 
-  // SCF converged
-  fprintf(stdout, "SCF converged! E_total = %20.10f\n", ene_total);
-
-
   end = std::chrono::steady_clock::now();
   time = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
   time_in_usec = time * 1e-3f;
   time_txt += "Time_SCF_Conv = " + std::to_string(time_in_usec) + " usec\n";
   time_total += time_in_usec;
 
+  // Validate the RHF/STO-3G energy of H2O (geometry in example/geom.xyz).
+  // Reference: Szabo & Ostlund, "Modern Quantum Chemistry", Table 3.13 lists the
+  // HF/STO-3G total energy of H2O as -74.963 Eh at the standard geometry of
+  // Table 3.10 (R_OH = 1.809 a.u., angle 104.52 deg), which is the geometry in
+  // example/geom.xyz. Both references below round to that value; SP and DP differ
+  // only in the trailing digits due to floating-point accumulation in the SCF.
+
+  // SCF converged
+  fprintf(stdout, "SCF converged! E_total = %20.10f\n", ene_total);
+
+  const double ref_energy = use_dp ? -74.9629229672 : -74.9629154055;
+  const double tol = use_dp ? 1.0e-6 : 1.0e-4;
+  const double err = fabs(ene_total - ref_energy);
+  if (err < tol) {
+    fprintf(stdout, "PASS: E_total error %.2e within tolerance %.0e\n", err, tol);
+  } else {
+    fprintf(stderr, "FAIL: E_total = %.10f, expected %.10f (error %.2e > tol %.0e)\n",
+            ene_total, ref_energy, err, tol);
+    return 1;
+  }
 
   // print MO information
   start = std::chrono::steady_clock::now();
