@@ -551,6 +551,7 @@ set(HECBENCH_POC_BENCHMARKS
     topk
     upsample
     vadd
+    wenofv
 )
 
 # Include benchmark subdirectories
