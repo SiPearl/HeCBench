@@ -538,6 +538,7 @@ set(HECBENCH_POC_BENCHMARKS
     mlaDecode
     mlp
     muon
+    oziMMU
     pointerchase
     rmsnorm
     saxpy-ompt
