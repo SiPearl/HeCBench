@@ -534,6 +534,7 @@ set(HECBENCH_POC_BENCHMARKS
     jacobian
     leukocyte
     miniFE
+    megablocks
     mergeVS
     mlaDecode
     mlp
