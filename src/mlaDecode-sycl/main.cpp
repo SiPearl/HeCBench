@@ -142,6 +142,6 @@ int main(int argc, char **argv) {
 
   run(q, 64,  H, 1024, repeat, true);
   run(q, 128, H, 4096, repeat, true);
-  run(q, 32,  H, 8192, repeat, false);
+  run(q, 32,  H, 8192, repeat, true);
   return 0;
 }
