@@ -77,6 +77,14 @@ expected to follow the process below in addition to the standards above:
   delivery (CI/CD) checks pass. As ORNL's CI/CD infrastructure is rolled out,
   contributors are expected to keep their changes building and passing the
   automated checks, and not to bypass, disable, or tamper with these checks.
+* **Large files and DVC.** Large files should be managed through Data Version
+  Control (DVC) rather than committed directly to the Git repository. External
+  contributors are not expected to upload files directly to the project's DVC
+  remote or S3 backend. Instead, the PR description should provide links from
+  which maintainers can retrieve the files, along with enough information to
+  identify their purpose, origin, licensing, and expected contents. During
+  review, maintainers will inspect the files and, when appropriate, add them to
+  the DVC-managed storage as part of the PR review and integration process.
 * **New benchmarks.** When contributing a new benchmark, include the required
   attribution and licensing information for any upstream source, and provide the
   corresponding programming-model variants and verification where applicable.
