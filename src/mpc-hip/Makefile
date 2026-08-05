@@ -49,7 +49,7 @@ $(program): $(obj) Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(program) $(obj) *.txt fpc
+	rm -rf $(program) $(obj) compression.txt decompression.txt fpc
 
 run: $(program)
         # compression
