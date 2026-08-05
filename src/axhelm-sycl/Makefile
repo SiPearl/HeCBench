@@ -38,7 +38,14 @@ ifeq ($(VENDOR), AdaptiveCpp)
 endif
 
 # Linker Flags
-LDFLAGS = ./BlasLapack/libBlasLapack.a -lgfortran
+FC ?= gfortran
+LIBGFORTRAN := $(shell $(FC) -print-file-name=libgfortran.so)
+
+ifeq ($(wildcard $(LIBGFORTRAN)),)
+$(error Could not find libgfortran using $(FC))
+endif
+
+LDLIBS = ./BlasLapack/libBlasLapack.a $(LIBGFORTRAN)
 
 ifeq ($(CUDA), yes)
   CFLAGS += -fsycl-targets=nvptx64-nvidia-cuda \
@@ -69,7 +76,7 @@ endif
 #===============================================================================
 
 $(program): $(obj) BlasLapack/libBlasLapack.a
-	$(CC) $(CFLAGS) $+ -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $+ -o $@ $(LDFLAGS) $(LDLIBS)
 
 main.o : main.cpp ../axhelm-cuda/axhelmReference.cpp
 	$(CC) $(CFLAGS) -c $< -o $@

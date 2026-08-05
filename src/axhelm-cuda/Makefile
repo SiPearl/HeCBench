@@ -26,7 +26,14 @@ CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Xcompiler -Wall -arch=$(ARCH) \
           -Ddfloat=float -Ddlong=int 
 
 # Linker Flags
-LDFLAGS = BlasLapack/libBlasLapack.a -lgfortran
+FC ?= gfortran
+LIBGFORTRAN := $(shell $(FC) -print-file-name=libgfortran.so)
+
+ifeq ($(wildcard $(LIBGFORTRAN)),)
+$(error Could not find libgfortran using $(FC))
+endif
+
+LDLIBS = BlasLapack/libBlasLapack.a $(LIBGFORTRAN)
 
 # Debug Flags
 ifeq ($(DEBUG),yes)
@@ -44,7 +51,7 @@ endif
 #===============================================================================
 
 $(program): $(obj) BlasLapack/libBlasLapack.a 
-	$(CC) $(CFLAGS) $+ -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $+ -o $@ $(LDFLAGS) $(LDLIBS)
 
 main.o : main.cu axhelmKernel.cpp axhelmReference.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
