@@ -27,14 +27,7 @@ CFLAGS := $(EXTRA_CFLAGS) -Wall -I../include \
 	  --hipsycl-gpu-arch=$(MARCH)
 
 # Linker Flags
-FC ?= gfortran
-LIBGFORTRAN := $(shell $(FC) -print-file-name=libgfortran.so)
-
-ifeq ($(wildcard $(LIBGFORTRAN)),)
-$(error Could not find libgfortran using $(FC))
-endif
-
-LDLIBS = ./BlasLapack/libBlasLapack.a $(LIBGFORTRAN)
+LDFLAGS = ./BlasLapack/libBlasLapack.a -lgfortran
 
 # Debug Flags
 ifeq ($(DEBUG),yes)
@@ -66,7 +59,7 @@ meshBasis.o : meshBasis.cpp meshBasis.hpp meshNodesTet3D.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(program): main.o meshBasis.o
-	$(CC) $(CFLAGS) $+ -o $@ $(LDFLAGS) $(LDLIBS)
+	$(CC) $(CFLAGS) $+ -o $@ $(LDFLAGS)
 
 clean:
 	rm -rf $(program) main.o meshBasis.o
