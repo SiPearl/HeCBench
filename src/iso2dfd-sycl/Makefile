@@ -75,7 +75,7 @@ $(program): $(obj)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(program) $(obj) *.txt *.bin
+	rm -rf $(program) $(obj) error_diff.txt *.bin
 
 run: $(program)
 	$(LAUNCHER) ./$(program) 2048 2048 1000

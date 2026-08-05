@@ -53,7 +53,7 @@ $(program): $(obj) Makefile
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(program) $(obj) *.txt
+	rm -rf $(program) $(obj)
 
 run: $(program)
 	$(LAUNCHER) ./$(program) 90112 165
