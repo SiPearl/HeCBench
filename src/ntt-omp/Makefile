@@ -52,7 +52,7 @@ endif
 $(program): $(obj)
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-%.o: %.cpp ../ntt-cuda/modP.h
+%.o: %.cpp ../ntt-cuda/modP.h ../ntt-cuda/reference.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
