@@ -12,7 +12,10 @@ set(DEPEND_ON_BOOST "hbc" "ge-spmm" "mmcsf" "warpsort" "gerbil")
 set(DEPEND_ON_MPI "miniDGS" "miniWeather" "pingpong" "sparkler" "allreduce" "ccl" "halo-finder")
 
 # Global list for benchmarks that require GSL
-set(DEPEND_ON_GSL "sss" "xlqc")
+set(DEPEND_ON_GSL "sss")
+
+# Global list for benchmarks that require Eigen
+set(DEPEND_ON_EIGEN "xlqc")
 
 # Global list for benchmarks that require GDAL
 set(DEPEND_ON_GDAL "stsg")
@@ -119,6 +122,14 @@ function(add_hecbench_benchmark)
     if(${BENCH_NAME} IN_LIST DEPEND_ON_GSL)
         if(NOT GSL_FOUND)
             message(STATUS "Skipping ${BENCH_NAME}-${BENCH_MODEL_LOWER} (GSL not found)")
+            return()
+        endif()
+    endif()
+
+    if(${BENCH_NAME} IN_LIST DEPEND_ON_EIGEN)
+        # Eigen is header-only; the imported target carries the include path
+        if(NOT TARGET Eigen3::Eigen)
+            message(STATUS "Skipping ${BENCH_NAME}-${BENCH_MODEL_LOWER} (Eigen not found)")
             return()
         endif()
     endif()

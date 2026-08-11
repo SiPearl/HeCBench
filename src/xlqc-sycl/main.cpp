@@ -26,11 +26,7 @@ of this software, even if advised of the possibility of such damage.
 #include <string>
 #include <iostream>
 
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_blas.h>
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_linalg.h>
+#include "gsl_compat.h"
 
 #include "int_lib/cints.h"
 #include "int_lib/crys.h"
@@ -638,28 +634,25 @@ int main(int argc, char* argv[])
   const double err = fabs(ene_total - ref_energy);
   if (err < tol) {
     fprintf(stdout, "PASS: E_total error %.2e within tolerance %.0e\n", err, tol);
+    // print MO information
+    fprintf(stdout, "%5s %10s %15s %12s\n", "MO", "State", "E(Eh)", "E(eV)");
+    for (ibasis = 0; ibasis < p_basis->num; ++ ibasis)
+    {
+      char occ[10];
+      if (ibasis < n_occ) { strcpy(occ, "occ."); }
+      else { strcpy(occ, "virt."); }
+
+      double ener = gsl_vector_get(emo, ibasis);
+      fprintf(stdout, "%5d %10s %15.5f %12.2f\n",
+          ibasis + 1, occ, ener, ener * HARTREE2EV);
+    }
   } else {
     fprintf(stderr, "FAIL: E_total = %.10f, expected %.10f (error %.2e > tol %.0e)\n",
             ene_total, ref_energy, err, tol);
-    return 1;
-  }
-
-  // print MO information
-  start = std::chrono::steady_clock::now();
-
-  fprintf(stdout, "%5s %10s %15s %12s\n", "MO", "State", "E(Eh)", "E(eV)");
-  for (ibasis = 0; ibasis < p_basis->num; ++ ibasis)
-  {
-    char occ[10];
-    if (ibasis < n_occ) { strcpy(occ, "occ."); }
-    else { strcpy(occ, "virt."); }
-
-    double ener = gsl_vector_get(emo, ibasis);
-    fprintf(stdout, "%5d %10s %15.5f %12.2f\n",
-        ibasis + 1, occ, ener, ener * HARTREE2EV);
   }
 
   //====== free device memories ========
+  start = std::chrono::steady_clock::now();
 
   sycl::free(d_pbf_xlec, q);
   sycl::free(d_pbf_to_cbf, q);
