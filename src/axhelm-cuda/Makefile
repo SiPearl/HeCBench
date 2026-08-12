@@ -27,10 +27,12 @@ CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Xcompiler -Wall -arch=$(ARCH) \
 
 # Linker Flags
 FC = gfortran
-LIBGFORTRAN := $(shell $(FC) -print-file-name=libgfortran.so)
 
-ifeq ($(wildcard $(LIBGFORTRAN)),)
-$(error Could not find libgfortran using $(FC))
+ifneq ($(MAKECMDGOALS),clean)
+  LIBGFORTRAN := $(shell $(FC) -print-file-name=libgfortran.so)
+  ifeq ($(wildcard $(LIBGFORTRAN)),)
+    $(error Could not find libgfortran using $(FC))
+  endif
 endif
 
 LDLIBS = BlasLapack/libBlasLapack.a $(LIBGFORTRAN)
