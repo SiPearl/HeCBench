@@ -11,9 +11,6 @@ set(DEPEND_ON_BOOST "hbc" "ge-spmm" "mmcsf" "warpsort" "gerbil")
 # Global list for benchmarks that require MPI
 set(DEPEND_ON_MPI "miniDGS" "miniWeather" "pingpong" "sparkler" "allreduce" "ccl" "halo-finder")
 
-# Global list for benchmarks that require GSL
-set(DEPEND_ON_GSL "sss")
-
 # Global list for benchmarks that require Eigen
 set(DEPEND_ON_EIGEN "xlqc")
 
@@ -115,13 +112,6 @@ function(add_hecbench_benchmark)
     if(${BENCH_NAME} IN_LIST DEPEND_ON_MPI)
         if(NOT MPI_FOUND)
             message(STATUS "Skipping ${BENCH_NAME}-${BENCH_MODEL_LOWER} (MPI not found)")
-            return()
-        endif()
-    endif()
-
-    if(${BENCH_NAME} IN_LIST DEPEND_ON_GSL)
-        if(NOT GSL_FOUND)
-            message(STATUS "Skipping ${BENCH_NAME}-${BENCH_MODEL_LOWER} (GSL not found)")
             return()
         endif()
     endif()
