@@ -27,7 +27,7 @@ CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -Ddfloat=float -Ddlong=int \
           -I../axhelm-cuda
 
 # Linker Flags
-FC ?= gfortran
+FC = gfortran
 LIBGFORTRAN := $(shell $(FC) -print-file-name=libgfortran.so)
 
 ifeq ($(wildcard $(LIBGFORTRAN)),)

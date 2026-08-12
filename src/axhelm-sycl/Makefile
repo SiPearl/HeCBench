@@ -38,7 +38,7 @@ ifeq ($(VENDOR), AdaptiveCpp)
 endif
 
 # Linker Flags
-FC ?= gfortran
+FC = gfortran
 LIBGFORTRAN := $(shell $(FC) -print-file-name=libgfortran.so)
 
 ifeq ($(wildcard $(LIBGFORTRAN)),)
