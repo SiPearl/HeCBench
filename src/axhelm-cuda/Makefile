@@ -28,12 +28,11 @@ CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Xcompiler -Wall -arch=$(ARCH) \
 # Linker Flags
 FC = gfortran
 
-ifneq ($(MAKECMDGOALS),clean)
-  LIBGFORTRAN := $(shell $(FC) -print-file-name=libgfortran.so)
-  ifeq ($(wildcard $(LIBGFORTRAN)),)
-    $(error Could not find libgfortran using $(FC))
-  endif
-endif
+# Resolved on demand, so goals that do not link need no Fortran compiler.
+# $(FC) echoes the bare name when it cannot resolve the library, hence /%.
+LIBGFORTRAN_PATH = $(filter /%,$(shell $(FC) -print-file-name=libgfortran.so))
+LIBGFORTRAN = $(or $(wildcard $(LIBGFORTRAN_PATH)),\
+              $(error Could not find libgfortran using $(FC)))
 
 LDLIBS = BlasLapack/libBlasLapack.a $(LIBGFORTRAN)
 
