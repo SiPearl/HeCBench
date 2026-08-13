@@ -362,13 +362,13 @@ inline void gsl_compat_qpsrt(gsl_integration_workspace *w) {
     i_nrmax--;
   }
 
-  size_t top;
+  int top;
   if (last < (limit / 2 + 2))
-    top = last;
+    top = (int)last;
   else
-    top = limit - last + 1;
+    top = (int)(limit - last + 1);
 
-  size_t i = i_nrmax + 1;
+  int i = (int)i_nrmax + 1;
 
   while (i < top && errmax < elist[order[i]]) {
     order[i - 1] = order[i];
@@ -379,7 +379,7 @@ inline void gsl_compat_qpsrt(gsl_integration_workspace *w) {
 
   const double errmin = elist[last];
 
-  size_t k = top - 1;
+  int k = top - 1;
 
   while (k > i - 2 && errmin >= elist[order[k]]) {
     order[k + 1] = order[k];
