@@ -2,7 +2,6 @@
  This file is part of the XLQC program.                                      
  Copyright (C) 2015 Xin Li <lixin.reco@gmail.com>                            
                                                                            
- Filename:  main.cu                                                      
  License:   BSD 3-Clause License
 
  This software is provided by the copyright holders and contributors "as is"
@@ -18,7 +17,6 @@
  *****************************************************************************/
 
 #include <chrono>
-#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -44,6 +42,8 @@ int main(int argc, char* argv[])
     int use_5d = 1;
     // use double precision?
     int use_dp = 1;
+    // status is set on failure of result check
+    int status = 0;
 
     if (argc > 1) {
         for (int i = 1; i < argc; ++ i) {
@@ -597,6 +597,7 @@ int main(int argc, char* argv[])
     } else {
         fprintf(stderr, "FAIL: E_total = %.10f, expected %.10f (error %.2e > tol %.0e)\n",
                 ene_total, ref_energy, err, tol);
+        status = 1;
     }
 
     //====== free device memories ========
@@ -704,5 +705,5 @@ int main(int argc, char* argv[])
 
     //====== the end of program ========
 
-    return 0;
+    return status;
 }

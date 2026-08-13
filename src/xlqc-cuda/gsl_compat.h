@@ -21,6 +21,7 @@
 #define GSL_COMPAT_H
 
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>

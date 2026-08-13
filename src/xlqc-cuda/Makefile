@@ -30,7 +30,8 @@ obj=basis.o scf.o main.o crys.o cints.o cuda_rys_sp.o cuda_rys_dp.o
 #===============================================================================
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Xcompiler -Wall $(EIGEN_INC) -arch=$(ARCH)
+CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Xcompiler -Wall $(EIGEN_INC) -arch=$(ARCH) \
+          --expt-relaxed-constexpr
 
 # Linker Flags
 LDFLAGS =

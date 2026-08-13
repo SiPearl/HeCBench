@@ -57,16 +57,16 @@ $(program): $(obj)
 	$(CC) -fgpu-rdc -c -o $@ $< $(CFLAGS)
 
 scf.o: ../xlqc-cuda/scf.cc
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -fgpu-rdc -c -o $@ $< $(CFLAGS)
 
 basis.o: ../xlqc-cuda/basis.cc
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -fgpu-rdc -c -o $@ $< $(CFLAGS)
 
 crys.o: ../xlqc-cuda/int_lib/crys.cc
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -fgpu-rdc -c -o $@ $< $(CFLAGS)
 
 cints.o: ../xlqc-cuda/int_lib/cints.cc
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -fgpu-rdc -c -o $@ $< $(CFLAGS)
 
 clean:
 	rm -rf $(program) $(obj)

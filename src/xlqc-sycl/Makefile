@@ -97,6 +97,8 @@ cints.o: ../xlqc-cuda/int_lib/cints.cc
 clean:
 	rm -rf $(program) $(obj)
 
+#  ONEAPI_DEVICE_SELECTOR=level_zero:gpu
+#  ONEAPI_DEVICE_SELECTOR=level_zero:gpu OverrideDefaultFP64Settings=1 IGC_EnableDPEmulation=1
 run: $(program)
 	$(LAUNCHER) ./$(program) sp
 	$(LAUNCHER) ./$(program) dp
