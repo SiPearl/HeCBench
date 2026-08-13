@@ -63,7 +63,7 @@ BlasLapack/libBlasLapack.a:
 	cd BlasLapack && make -j8 && cd ..
 
 clean:
-	cd BlasLapack && make clean && cd ..
+	if [ -d BlasLapack ]; then cd BlasLapack && make clean; fi
 	rm -rf $(program) $(obj)
 
 # run one- and three-dimensional kernels
