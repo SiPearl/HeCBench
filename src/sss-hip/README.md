@@ -25,4 +25,5 @@ Dependencies
 ------------
 None beyond a C++17 compiler. The uniform random number generator (MT19937) and
 the adaptive Gauss-Kronrod quadrature the sampler needs are implemented in
-`gsl_compat.h` in this folder.
+`../sss-cuda/gsl_compat.h`, which this variant shares with the CUDA variant
+along with the rest of the host sources.
