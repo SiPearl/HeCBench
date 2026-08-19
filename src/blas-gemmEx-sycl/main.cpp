@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <chrono>
+#include <cmath>
 #include <sycl/sycl.hpp>
 #ifdef USE_ONEMATH
 #include <oneapi/math.hpp>
@@ -28,6 +29,37 @@ void free_memory(sycl::queue &q, T *A, T *B, S *C) {
   sycl::free(A, q);
   sycl::free(B, q);
   sycl::free(C, q);
+}
+
+void compute_reference(const double *A, const double *B, double *ref,
+                        int rows, int n, int k)
+{
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < n; ++j) {
+      double sum = 0.0;
+      for (int p = 0; p < k; ++p)
+        sum += A[i * k + p] * B[p * n + j];
+      ref[i * n + j] = sum;
+    }
+  }
+}
+
+template <typename Tc>
+bool verify_gemm(const char *name, const double *ref, const Tc *C,
+                  int rows, int n, double tol, double scale = 1.0)
+{
+  double max_err = 0.0;
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < n; ++j) {
+      double val = double(C[i * n + j]) * scale;
+      double err = fabs(val - ref[i * n + j]);
+      if (err > max_err) max_err = err;
+    }
+  }
+  bool ok = max_err <= tol;
+  printf("%-32s %s (max abs error = %.6f, tol = %.6f)\n",
+         name, ok ? "PASS" : "FAIL", max_err, tol);
+  return ok;
 }
 
 template <typename Ta, typename Tc, typename Ts>
@@ -179,34 +211,51 @@ int main(int argc, char* argv[]) {
 #endif
   }
 
+  const int verify_rows = (m < 8) ? m : 8;
+  double *ref = (double*) malloc(verify_rows * n * sizeof(double));
+  if (ref == nullptr) {
+    printf("reference buffer allocation failed\n");
+    return 1;
+  }
+  compute_reference(dA, dB, ref, verify_rows, n, k);
+  const double base_tol = double(k);
+
 
   printf(">>>>>>>>>>>>>>>>> test fp64 >>>>>>>>>>>>>>>>>\n");
   test_gemm(q, m, n, k, dA, dB, dC, d_alpha, d_beta, iteration);
+  verify_gemm("fp64", ref, dC, verify_rows, n, 1e-6 * base_tol);
 
 #if defined(__SYCL_COMPILER_VERSION) && !defined(USE_ONEMATH)
   printf(">>>>>>>>>>>>>>>>> test fp32 (compute mode bf16) >>>>>>>>>>>>>>>>>\n");
   test_gemm(q, m, n, k, fA, fB, fC, f_alpha, f_beta, iteration,
             compute_mode_t::float_to_bf16);
+  verify_gemm("fp32 (bf16 compute mode)", ref, fC, verify_rows, n, 5e-2 * base_tol);
 
   printf(">>>>>>>>>>>>>>>>> test fp32 (compute mode tf32) >>>>>>>>>>>>>>>>>\n");
   test_gemm(q, m, n, k, fA, fB, fC, f_alpha, f_beta, iteration,
             compute_mode_t::float_to_tf32);
+  verify_gemm("fp32 (tf32 compute mode)", ref, fC, verify_rows, n, 1e-2 * base_tol);
 #endif
 
   printf(">>>>>>>>>>>>>>>>> test fp32 (compute mode fp32) >>>>>>>>>>>>>>>>>\n");
   test_gemm(q, m, n, k, fA, fB, fC, f_alpha, f_beta, iteration);
+  verify_gemm("fp32", ref, fC, verify_rows, n, 1e-3 * base_tol);
 
   printf(">>>>>>>>>>>>>>>>> test fp16 >>>>>>>>>>>>>>>>>\n");
   test_gemm(q, m, n, k, hA, hB, hC, h_alpha, h_beta, iteration);
+  verify_gemm("fp16", ref, hC, verify_rows, n, 5e-2 * base_tol);
 
 #if defined(__SYCL_COMPILER_VERSION) && !defined(USE_ONEMATH)
   printf(">>>>>>>>>>>>>>>>> test bfloat16 >>>>>>>>>>>>>\n");
   test_gemm(q, m, n, k, bfA, bfB, bfC, bf_alpha, bf_beta, iteration);
+  verify_gemm("bf16", ref, bfC, verify_rows, n, 8e-2 * base_tol);
 
   printf(">>>>>>>>>>>>>>>>> test int8 >>>>>>>>>>>>>>>>>\n");
   test_gemm(q, m, n, k, iA, iB, iC, i_alpha, i_beta, iteration);
+  verify_gemm("int8", ref, iC, verify_rows, n, 5e-1 * base_tol, 1.0 / (127.0 * 127.0));
 #endif
 
+  free(ref);
 
 
   printf(">>>>>>>>>>>>>>>>> compare result >>>>>>>>>>>>>>>>>\n");
